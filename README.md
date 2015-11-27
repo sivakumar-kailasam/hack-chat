@@ -9,11 +9,13 @@ A chat app for a hackathon @ work
   - `npm install -g react-native-cli`
 
 ## To run the iOS app
-- Open ./ios-and-android-apps/chatty/ios/chatty.xcodeproj in Xcode
+- Open `./ios-and-android-apps/chatty/ios/chatty.xcodeproj` in Xcode
 - Hit the Run button
- 
+
 ## To run the Android app
 - Have an Android emulator running (quickest way to get started), or a device connected
 - `cd ./ios-and-android-apps/chatty`
 - run `react-native run-android`
 
+## To run the js server
+- run `react-native start`
