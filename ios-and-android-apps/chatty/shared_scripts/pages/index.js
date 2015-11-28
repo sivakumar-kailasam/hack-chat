@@ -37,10 +37,12 @@ const chatty = React.createClass({
       });
     }
 
-    const context = this;
-    setTimeout(function() {
-      context.setState({ loginButtonState: 'success' });
-    }, 750);
+    this.setState({ loginButtonState: 'success' });
+    this.props.navigator.push({
+      name: 'chatRoom',
+      userName: this.state.userName,
+      emailId: this.state.emailId
+    })
 
   },
   render() {
