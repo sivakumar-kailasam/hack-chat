@@ -5,7 +5,9 @@ const { StyleSheet } = React;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5FCFF',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
   },
   formGroup: {
   },
@@ -20,12 +22,22 @@ const styles = StyleSheet.create({
   loginInput: {
     fontSize: 15,
     height: 50,
-    width: 300,
+    marginTop: 5,
+    marginBottom: 5,
     borderWidth: 1,
-    borderColor: '#f5f5f5'
+    borderColor: '#f5f5f5',
+    alignItems: 'center',
   },
   loginLabel: {
     fontSize: 15
+  },
+  inputError: {
+    borderColor: 'red'
+  },
+  logoImage: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
   },
   welcome: {
     color: 'black',

@@ -2,9 +2,8 @@
 
 const React       = require('react-native');
 const Emoji       = require('react-native-emoji');
-const superheroes = require('superheroes');
+const validator = require('validator');
 const styles      = require('../styles');
-const Gravatar    = require('../components/gravatar');
 const AwesomeButton = require('react-native-awesome-button')
 
 const {
@@ -16,36 +15,54 @@ const {
 
 
 const chatty = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
-      randomUserNamePlaceholder: superheroes.random(),
       loginButtonState: 'idle'
     };
   },
   login() {
+    this.setState({loginButtonState: 'busy'});
+
+    if (!validator.isEmail(this.state.emailId)) {
+      return this.setState({
+        isEmailIdInvalid: true,
+        loginButtonState: 'idle'
+      });
+    }
+
+    if ((typeof this.state.userName === 'undefined') || (this.state.userName.trim() === '')) {
+      return this.setState({
+        isUserNameInvalid: true,
+        loginButtonState: 'idle'
+      });
+    }
+
+    const context = this;
+    setTimeout(function() {
+      context.setState({ loginButtonState: 'success' });
+    }, 750);
+
   },
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}> Welcome to Chatty! <Emoji name='sunglasses'/> </Text>
-        <Image source={require('../chat-icon.png')} style={{width: 100, height: 100, alignSelf: 'center'}} />
+        <Image source={require('../chat-icon.png')} style={styles.logoImage} />
         <View style={styles.formGroup}>
-          <Text>Your name</Text>
           <TextInput
-            style={styles.loginInput}
+            style={[styles.loginInput, this.state.isUserNameInvalid && styles.inputError]}
             onChangeText={(userName) => this.setState({ userName })}
             value={this.state.userName}
-            placeholder={ this.state.randomUserNamePlaceholder }
+            placeholder='Your name'
           />
         </View>
         <View style={styles.formGroup}>
-          <Text>Your email id</Text>
           <TextInput
-            style={styles.loginInput}
+            style={[styles.loginInput, this.state.isEmailIdInvalid && styles.inputError]}
             onChangeText={(emailId) => this.setState({ emailId })}
             value={this.state.emailId}
             keyboardType='email-address'
-            placeholder='some.email.id@gmail.com'
+            placeholder='Email'
           />
         </View>
        <AwesomeButton
@@ -64,13 +81,12 @@ const chatty = React.createClass({
             spinner: true,
           },
           success: {
-            text: 'Logged In',
+            text: `Awesome let's chat!`,
             backgroundColor: '#339944'
           }
          }}
          buttonState={this.state.loginButtonState}
          />
-       <Gravatar email={this.state.emailId} />
       </View>
     );
   }
