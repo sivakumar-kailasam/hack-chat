@@ -10,7 +10,9 @@ const RaisedButton = require('material-ui/lib/raised-button');
 const Avatar = require('material-ui/lib/avatar');
 const List = require('material-ui/lib/lists/list');
 const ListItem = require('material-ui/lib/lists/list-item');
-
+const FloatingActionButton = require('material-ui/lib/floating-action-button');
+const ListDivider = require('material-ui/lib/lists/list-divider');
+const SendIcon= require('material-ui/lib/svg-icons/content/send');
 const gravatar = require('gravatar');
 
 // For material UI plugin
@@ -71,6 +73,7 @@ const UsersList = React.createClass({
           this.props.users.map(function(user) {
             const gravatarUrl = gravatar.url(user.emailAddress, {s: 40, d: 'retro'});
             return (<ListItem
+                      disabled={true}
                       key={user.secretSessionId}
                       leftAvatar={<Avatar src={gravatarUrl} size={40} />}
                       primaryText={user.userName}
@@ -89,7 +92,8 @@ const ChatRoom = React.createClass({
   getInitialState() {
     return {
       users: this.props.users,
-      messages: []
+      messages: [],
+      messageContent: ''
     };
   },
   _joinOrLeaveRoom(data) {
@@ -103,31 +107,77 @@ const ChatRoom = React.createClass({
     });
     this.setState({messages, users});
   },
+  sendMessage() {
+    if(this.state.messageContent.trim() === '') {return}
+    const dataToSend = {
+      userName: this.props.userName,
+      emailAddress: this.props.emailAddress,
+      message: this.state.messageContent
+    };
+    socket.emit('clientSentMessage', dataToSend, this._updateMessage);
+  },
+  _updateMessage(data) {
+    console.log('received message', data);
+    const messages = this.state.messages;
+    messages.push(data.message);
+    this.setState({messages, messageContent: ''});
+    //Down right hack! :(
+    const messagesDisplayContainer = document.getElementsByClassName('messages-display')[0];
+    messagesDisplayContainer.scrollTop = messagesDisplayContainer.scrollHeight;
+    const messageComposer = document.getElementsByClassName('message-composer')[0];
+    const inputField = messageComposer.querySelector('input');
+    inputField.focus();
+  },
   componentDidMount() {
     socket.on('person:enteredRoom', this._joinOrLeaveRoom);
     socket.on('person:leftRoom', this._joinOrLeaveRoom);
+    socket.on('serverSentMessage', this._updateMessage);
   },
   render() {
     return (
-      <div className="flex-container">
         <div className="flex-item chat-container">
-          <Paper zDepth={1} style={{width: '100%'}}>
-          {
-            this.state.messages.map((message)=> {
-              if(message.type === 'activity') {
-                return (
-                  <div key={message.id}>
-                  {message.userName} {message.activityType} the conversation
-                  </div>
-                );
-              } else {
-              }
-            })
-          }
-          </Paper>
+          <div className="messages-container">
+            <div className="messages-display">
+              <Paper zDepth={1} style={{width: '100%', height: '100%'}}>
+                <List>
+                  {
+                    this.state.messages.map((message, i)=> {
+                      const gravatarUrl = gravatar.url(message.emailAddress, {s: 40, d: 'retro'});
+                      return (
+                        <div key={message.id}>
+                        <ListItem
+                          disabled={true}
+                          leftAvatar={<Avatar src={gravatarUrl} />}
+                          primaryText={message.userName}
+                          secondaryText={
+                            <p>
+                            {message.content}
+                            </p>
+                          }
+                        />
+                        <ListDivider />
+                        </div>
+                      );
+                    })
+                  }
+                </List>
+              </Paper>
+            </div>
+            <div className="message-composer">
+              <Paper zDepth={1} style={{width: '100%', height: '100%', paddingTop: '2em'}}>
+                <TextField
+                  style={{width: '90%'}}
+                  hintText="Type your message here"
+                  value={this.state.messageContent}
+                  onChange={(e)=> this.setState({'messageContent': e.target.value})}/>
+                <FloatingActionButton onTouchTap={this.sendMessage} mini={true}>
+                  <SendIcon/>
+                </FloatingActionButton>
+              </Paper>
+            </div>
+            </div>
           <UsersList users={this.state.users} />
         </div>
-      </div>
     );
   }
 });

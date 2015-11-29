@@ -11,37 +11,43 @@ module.exports = function (socket) {
     connectedUsers.push({emailAddress, userName, secretSessionId});
     socket.broadcast.emit('person:enteredRoom', {
       message: {
-          id: Uuid.raw(),
-          userName,
-          emailAddress,
-          type: 'activity',
-          activityType: 'joined'
-     },
-     users: connectedUsers
+        id: Uuid.raw(),
+        userName,
+        emailAddress,
+        content: 'joined the conversation'
+      },
+      users: connectedUsers
     });
     fn({
       users: _.filter(connectedUsers, (user) => {return secretSessionId !== user.secretSessionId}),
-      secretSessionId
+        secretSessionId
     });
     console.log(`${userName}(${emailAddress}) joined`);
   });
 
-  socket.on('send:message', function(data) {
-    socket.broadcast.emit('send:message', {
-      user: data.user,
-      message: data.message
-    });
+  socket.on('clientSentMessage', function(data, fn) {
+    const message = {
+      id: Uuid.raw(),
+      userName: data.userName,
+      emailAddress: data.emailAddress,
+      content: data.message
+    };
+    console.log('Received message from client');
+    socket.broadcast.emit('serverSentMessage', { message });
+    fn({message});
   });
 
   socket.on('disconnect', function () {
     const disconnectedUser = _.remove(connectedUsers, (user) => { return user.secretSessionId === this.id})[0];
+    if(typeof disconnectedUser === 'undefined') {
+      return;
+    }
     socket.broadcast.emit('person:leftRoom', {
       message: {
         id: Uuid.raw(),
         userName: disconnectedUser.userName,
         emailAddress: disconnectedUser.emailAddress,
-        type: 'activity',
-        activityType: 'left'
+        content: 'left the conversation'
       },
       users: connectedUsers
     });

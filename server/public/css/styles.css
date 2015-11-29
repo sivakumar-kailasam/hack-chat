@@ -48,3 +48,18 @@ body, html {
 	height: 95%;
 	align-items: flex-start;
 }
+
+.messages-container {
+    flex-direction: row;
+    width: 75%;
+    height: 95%;
+}
+
+.messages-display {
+    height: 80%;
+}
+
+.message-composer {
+    margin-top: 1em;
+    height: 20%;
+}
