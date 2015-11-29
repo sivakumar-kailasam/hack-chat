@@ -54,11 +54,16 @@ const LoginForm = React.createClass({
   },
   render() {
     return (
-      <Paper zDepth={5}>
-        <div><TextField floatingLabelText="Your name" onChange={(e) => this.setState({userName: e.target.value})} /></div>
-        <div><TextField floatingLabelText="Email addresss" onChange={(e)=> this.setState({emailAddress: e.target.value})}/></div>
-        <div><RaisedButton label="Let's chat!" backgroundColor='#2196f3' onTouchTap={this.gotoChatRoom}/></div>
-      </Paper>
+      <div className="login-page">
+        <div className="login-form">
+        <Paper zDepth={5} style={{padding: '5em'}}>
+          <div><Avatar src="/chat-icon.png" size={122}/></div>
+          <div><TextField floatingLabelText="Your name" onChange={(e) => this.setState({userName: e.target.value})} /></div>
+          <div><TextField floatingLabelText="Email addresss" onChange={(e)=> this.setState({emailAddress: e.target.value})}/></div>
+          <div><RaisedButton label="Let's chat!" backgroundColor='#2196f3' onTouchTap={this.gotoChatRoom}/></div>
+        </Paper>
+      </div>
+      </div>
     );
   }
 });
