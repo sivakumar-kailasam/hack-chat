@@ -1,23 +1,24 @@
 'use strict';
 
-const React = require('react');
+const React  = require('react');
 const render = require('react-dom').render;
-const gravatar = require('gravatar');
-const classNames = require('classnames');
+
+const classNames           = require('classnames');
+const gravatar             = require('gravatar');
 const injectTapEventPlugin = require("react-tap-event-plugin");
 
-const TextField = require('material-ui/lib/text-field');
-const Paper = require('material-ui/lib/paper');
-const RaisedButton = require('material-ui/lib/raised-button');
-const Avatar = require('material-ui/lib/avatar');
-const List = require('material-ui/lib/lists/list');
-const ListItem = require('material-ui/lib/lists/list-item');
+const Avatar               = require('material-ui/lib/avatar');
+const Card                 = require('material-ui/lib/card/card');
+const CardText             = require('material-ui/lib/card/card-text');
+const CardTitle            = require('material-ui/lib/card/card-title');
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
-const ListDivider = require('material-ui/lib/lists/list-divider');
-const SendIcon= require('material-ui/lib/svg-icons/content/send');
-const CardText = require('material-ui/lib/card/card-text');
-const CardTitle = require('material-ui/lib/card/card-title');
-const Card = require('material-ui/lib/card/card');
+const List                 = require('material-ui/lib/lists/list');
+const ListDivider          = require('material-ui/lib/lists/list-divider');
+const ListItem             = require('material-ui/lib/lists/list-item');
+const Paper                = require('material-ui/lib/paper');
+const RaisedButton         = require('material-ui/lib/raised-button');
+const SendIcon             = require('material-ui/lib/svg-icons/content/send');
+const TextField            = require('material-ui/lib/text-field');
 
 // For material UI plugin
 injectTapEventPlugin();
@@ -81,13 +82,14 @@ const UsersList = React.createClass({
         {
           this.props.users.map(function(user) {
             const gravatarUrl = gravatar.url(user.emailAddress, {s: 40, d: 'retro'});
-            return (<ListItem
-                      disabled={true}
-                      key={user.secretSessionId}
-                      leftAvatar={<Avatar src={gravatarUrl} size={40} />}
-                      primaryText={user.userName}
-                    />
-                   );
+            return (
+              <ListItem
+                  disabled={true}
+                  key={user.secretSessionId}
+                  leftAvatar={<Avatar src={gravatarUrl} size={40} />}
+                  primaryText={user.userName}
+              />
+            );
           })
         }
         </List>
