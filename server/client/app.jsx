@@ -124,6 +124,9 @@ const ChatRoom = React.createClass({
     //Down right hack! :(
     const messagesDisplayContainer = document.getElementsByClassName('messages-display')[0];
     messagesDisplayContainer.scrollTop = messagesDisplayContainer.scrollHeight;
+    this._focusOnComposer();
+  },
+  _focusOnComposer() {
     const messageComposer = document.getElementsByClassName('message-composer')[0];
     const inputField = messageComposer.querySelector('input');
     inputField.focus();
@@ -132,6 +135,7 @@ const ChatRoom = React.createClass({
     socket.on('person:enteredRoom', this._joinOrLeaveRoom);
     socket.on('person:leftRoom', this._joinOrLeaveRoom);
     socket.on('serverSentMessage', this._updateMessage);
+    this._focusOnComposer();
   },
   render() {
     return (
@@ -169,6 +173,7 @@ const ChatRoom = React.createClass({
                   style={{width: '90%'}}
                   hintText="Type your message here"
                   value={this.state.messageContent}
+                  onEnterKeyDown={this.sendMessage}
                   onChange={(e)=> this.setState({'messageContent': e.target.value})}/>
                 <FloatingActionButton onTouchTap={this.sendMessage} mini={true}>
                   <SendIcon/>
