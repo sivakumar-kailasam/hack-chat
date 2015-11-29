@@ -1,6 +1,6 @@
 'use strict';
 const _ = require('lodash');
-const Uuid = require('uuid-lib');
+const Uuid = require('node-uuid');
 const connectedUsers = [];
 
 module.exports = function (socket) {
@@ -11,7 +11,7 @@ module.exports = function (socket) {
     connectedUsers.push({emailAddress, userName, secretSessionId});
     socket.broadcast.emit('person:enteredRoom', {
       message: {
-        id: Uuid.raw(),
+        id: Uuid.v4(),
         userName,
         emailAddress,
         content: 'joined the conversation'
@@ -27,7 +27,7 @@ module.exports = function (socket) {
 
   socket.on('clientSentMessage', function(data, fn) {
     const message = {
-      id: Uuid.raw(),
+      id: Uuid.v4(),
       userName: data.userName,
       emailAddress: data.emailAddress,
       content: data.message
@@ -44,7 +44,7 @@ module.exports = function (socket) {
     }
     socket.broadcast.emit('person:leftRoom', {
       message: {
-        id: Uuid.raw(),
+        id: Uuid.v4(),
         userName: disconnectedUser.userName,
         emailAddress: disconnectedUser.emailAddress,
         content: 'left the conversation'
