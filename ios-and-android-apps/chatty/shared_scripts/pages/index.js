@@ -37,13 +37,23 @@ const chatty = React.createClass({
       });
     }
 
-    this.setState({ loginButtonState: 'success' });
-    this.props.navigator.push({
-      name: 'chatRoom',
+    const infoToSendToServer = {
       userName: this.state.userName,
-      emailId: this.state.emailId
-    })
-
+      emailAddress: this.state.emailId
+    };
+    this.props.socket.emit('person:enteringRoom', infoToSendToServer, (response) => {
+      this.setState({ loginButtonState: 'success' });
+      console.log('Entering room', response);
+      const { users, secretSessionId} = response;
+      this.props.navigator.push({
+        name: 'chatRoom',
+        userName: this.state.userName,
+        emailId: this.state.emailId,
+        socket: this.props.socket,
+        users,
+        secretSessionId
+      })
+    });
   },
   render() {
     return (
