@@ -1,227 +1,56 @@
 'use strict';
 
 const React = require('react');
+const render = require('react-dom').render;
+const injectTapEventPlugin = require("react-tap-event-plugin");
 
-const socket = io.connect();
+const TextField = require('material-ui/lib/text-field');
+const Paper = require('material-ui/lib/paper');
+const RaisedButton = require('material-ui/lib/raised-button');
 
-const UsersList = React.createClass({
-	render() {
-		return (
-			<div className='users'>
-				<h3> Online Users </h3>
-				<ul>
-					{
-						this.props.users.map((user, i) => {
-							return (
-								<li key={i}>
-									{user}
-								</li>
-							);
-						})
-					}
-				</ul>
-			</div>
-		);
-	}
+// For material UI plugin
+injectTapEventPlugin();
+
+//const socket = io.connect();
+
+const LoginForm = React.createClass({
+  getInitialState() {
+    return {
+      userName: '',
+      emailAddress: ''
+    };
+  },
+  gotoChatRoom() {
+    console.log(this.state);
+    render(
+      <ChatRoom
+        userName={this.state.userName}
+        emailAddress={this.state.emailAddress}
+      />
+      , document.getElementById('app')
+    );
+  },
+  render() {
+    return (
+      <Paper zDepth={5}>
+        <div><TextField floatingLabelText="Your name" onChange={(e) => this.setState({userName: e.target.value})} /></div>
+        <div><TextField floatingLabelText="Email addresss" onChange={(e)=> this.setState({emailAddress: e.target.value})}/></div>
+        <div><RaisedButton label="Let's chat!" backgroundColor='#2196f3' onTouchTap={this.gotoChatRoom}/></div>
+      </Paper>
+    );
+  }
 });
 
-const Message = React.createClass({
-	render() {
-		return (
-			<div className="message">
-				<strong>{this.props.user} :</strong>
-				<span>{this.props.text}</span>
-			</div>
-		);
-	}
+const ChatRoom = React.createClass({
+  render() {
+    return (
+      <Paper zDepth={1}>
+        <div>{this.props.userName}</div>
+        <div>{this.props.emailAddress}</div>
+      </Paper>
+    );
+  }
 });
 
-const MessageList = React.createClass({
-	render() {
-		return (
-			<div className='messages'>
-				<h2> Conversation: </h2>
-				{
-					this.props.messages.map((message, i) => {
-						return (
-							<Message
-								key={i}
-								user={message.user}
-								text={message.text}
-							/>
-						);
-					})
-				}
-			</div>
-		);
-	}
-});
-
-const MessageForm = React.createClass({
-
-	getInitialState() {
-		return {text: ''};
-	},
-
-	handleSubmit(e) {
-		e.preventDefault();
-		const message = {
-			user : this.props.user,
-			text : this.state.text
-		}
-		this.props.onMessageSubmit(message);
-		this.setState({ text: '' });
-	},
-
-	changeHandler(e) {
-		this.setState({ text : e.target.value });
-	},
-
-	render() {
-		return(
-			<div className='message_form'>
-				<h3>Write New Message</h3>
-				<form onSubmit={this.handleSubmit}>
-					<input
-						onChange={this.changeHandler}
-						value={this.state.text}
-					/>
-				</form>
-			</div>
-		);
-	}
-});
-
-const ChangeNameForm = React.createClass({
-	getInitialState() {
-		return {newName: ''};
-	},
-
-	onKey(e) {
-		this.setState({ newName : e.target.value });
-	},
-
-	handleSubmit(e) {
-		e.preventDefault();
-		const newName = this.state.newName;
-		this.props.onChangeName(newName);
-		this.setState({ newName: '' });
-	},
-
-	render() {
-		return(
-			<div className='change_name_form'>
-				<h3> Change Name </h3>
-				<form onSubmit={this.handleSubmit}>
-					<input
-						onChange={this.onKey}
-						value={this.state.newName}
-					/>
-				</form>
-			</div>
-		);
-	}
-});
-
-const ChatApp = React.createClass({
-
-	getInitialState() {
-		return {users: [], messages:[], text: ''};
-	},
-
-	componentDidMount() {
-		socket.on('init', this._initialize);
-		socket.on('send:message', this._messageRecieve);
-		socket.on('user:join', this._userJoined);
-		socket.on('user:left', this._userLeft);
-		socket.on('change:name', this._userChangedName);
-	},
-
-	_initialize(data) {
-		const {users, name} = data;
-		this.setState({users, user: name});
-	},
-
-	_messageRecieve(message) {
-		const {messages} = this.state;
-		messages.push(message);
-		this.setState({messages});
-	},
-
-	_userJoined(data) {
-		const {users, messages} = this.state;
-		const {name} = data;
-		users.push(name);
-		messages.push({
-			user: 'APPLICATION BOT',
-			text : name +' Joined'
-		});
-		this.setState({users, messages});
-	},
-
-	_userLeft(data) {
-		const {users, messages} = this.state;
-		const {name} = data;
-		const index = users.indexOf(name);
-		users.splice(index, 1);
-		messages.push({
-			user: 'APPLICATION BOT',
-			text : name +' Left'
-		});
-		this.setState({users, messages});
-	},
-
-	_userChangedName(data) {
-		const {oldName, newName} = data;
-		const {users, messages} = this.state;
-		const index = users.indexOf(oldName);
-		users.splice(index, 1, newName);
-		messages.push({
-			user: 'APPLICATION BOT',
-			text : 'Change Name : ' + oldName + ' ==> '+ newName
-		});
-		this.setState({users, messages});
-	},
-
-	handleMessageSubmit(message) {
-		const {messages} = this.state;
-		messages.push(message);
-		this.setState({messages});
-		socket.emit('send:message', message);
-	},
-
-	handleChangeName(newName) {
-		const oldName = this.state.user;
-		socket.emit('change:name', { name : newName}, (result) => {
-			if(!result) {
-				return alert('There was an error changing your name');
-			}
-			const {users} = this.state;
-			const index = users.indexOf(oldName);
-			users.splice(index, 1, newName);
-			this.setState({users, user: newName});
-		});
-	},
-
-	render() {
-		return (
-			<div>
-				<UsersList
-					users={this.state.users}
-				/>
-				<MessageList
-					messages={this.state.messages}
-				/>
-				<MessageForm
-					onMessageSubmit={this.handleMessageSubmit}
-					user={this.state.user}
-				/>
-				<ChangeNameForm
-					onChangeName={this.handleChangeName}
-				/>
-			</div>
-		);
-	}
-});
-
-require('react-dom').render(<ChatApp/>, document.getElementById('app'));
+//render(<LoginForm/>, document.getElementById('app'));
+render(<ChatRoom userName="siva" emailAddress="siva@zachelor.com"/>, document.getElementById('app'));

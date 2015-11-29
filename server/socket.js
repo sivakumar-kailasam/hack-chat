@@ -1,3 +1,5 @@
+'use strict';
+
 // Keep track of which names are used so that there are no duplicates
 const userNames = (function () {
   const names = {};
@@ -13,11 +15,11 @@ const userNames = (function () {
 
   // find the lowest unused "guest" name and claim it
   const getGuestName = function () {
-    const name,
-      nextUserId = 1;
+    let name;
+    let nextUserId = 1;
 
     do {
-      name = 'Guest ' + nextUserId;
+      name = `Guest ${nextUserId}`;
       nextUserId += 1;
     } while (!claim(name));
 
@@ -27,7 +29,7 @@ const userNames = (function () {
   // serialize claimed names as an array
   const get = function () {
     const res = [];
-    for (user in names) {
+    for (let user in names) {
       res.push(user);
     }
 
@@ -50,7 +52,7 @@ const userNames = (function () {
 
 // export function for listening to the socket
 module.exports = function (socket) {
-  const name = userNames.getGuestName();
+  let name = userNames.getGuestName();
 
   // send the new user their name and a list of users
   socket.emit('init', {
@@ -69,6 +71,7 @@ module.exports = function (socket) {
       user: name,
       text: data.text
     });
+    console.log(`${name} says ${data.text}`);
   });
 
   // validate a user's name change, and broadcast it on success
@@ -76,13 +79,13 @@ module.exports = function (socket) {
     if (userNames.claim(data.name)) {
       const oldName = name;
       userNames.free(oldName);
-
       name = data.name;
 
       socket.broadcast.emit('change:name', {
-        oldName: oldName,
+        oldName,
         newName: name
       });
+      console.log(`Changed name of ${oldName} to ${name}`);
 
       fn(true);
     } else {
@@ -93,8 +96,9 @@ module.exports = function (socket) {
   // clean up when a user leaves, and broadcast it to other users
   socket.on('disconnect', function () {
     socket.broadcast.emit('user:left', {
-      name: name
+      name
     });
+    console.log(`${name} left`);
     userNames.free(name);
   });
 };
