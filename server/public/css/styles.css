@@ -59,7 +59,6 @@ body, html {
 
 .messages-display {
 	height: 80%;
-	overflow: scroll;
 }
 
 .message-composer {
@@ -83,5 +82,21 @@ body, html {
 
 .login-form {
 	margin: 0 auto;
+}
+
+.conversation-card {
+    width: 40%;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: flex-start;
+    display: flex;
+	padding: 0.60em 0.5em;
+	text-align: left;
+}
+
+.message-self {
+    text-align: right;
+    margin-left: auto;
+    padding-right: 2em;
 }
 

@@ -2,6 +2,8 @@
 
 const React = require('react');
 const render = require('react-dom').render;
+const gravatar = require('gravatar');
+const classNames = require('classnames');
 const injectTapEventPlugin = require("react-tap-event-plugin");
 
 const TextField = require('material-ui/lib/text-field');
@@ -13,7 +15,9 @@ const ListItem = require('material-ui/lib/lists/list-item');
 const FloatingActionButton = require('material-ui/lib/floating-action-button');
 const ListDivider = require('material-ui/lib/lists/list-divider');
 const SendIcon= require('material-ui/lib/svg-icons/content/send');
-const gravatar = require('gravatar');
+const CardText = require('material-ui/lib/card/card-text');
+const CardTitle = require('material-ui/lib/card/card-title');
+const Card = require('material-ui/lib/card/card');
 
 // For material UI plugin
 injectTapEventPlugin();
@@ -127,7 +131,7 @@ const ChatRoom = React.createClass({
     messages.push(data.message);
     this.setState({messages, messageContent: ''});
     //Down right hack! :(
-    const messagesDisplayContainer = document.getElementsByClassName('messages-display')[0];
+    const messagesDisplayContainer = document.querySelector('.messages-display > div');
     messagesDisplayContainer.scrollTop = messagesDisplayContainer.scrollHeight;
     this._focusOnComposer();
   },
@@ -147,29 +151,46 @@ const ChatRoom = React.createClass({
         <div className="flex-item chat-container">
           <div className="messages-container">
             <div className="messages-display">
-              <Paper zDepth={1} style={{width: '100%', height: '100%'}}>
-                <List>
+              <Paper zDepth={1} style={{width: '100%', height: '100%', overflow:'scroll'}}>
                   {
                     this.state.messages.map((message, i)=> {
                       const gravatarUrl = gravatar.url(message.emailAddress, {s: 40, d: 'retro'});
+                      const isMessageFromMe = (message.emailAddress === this.props.emailAddress);
+                      const cardClassNames = classNames('conversation-card', {'message-self': isMessageFromMe}, {'message-others': !isMessageFromMe});
+                      const cardStyle = {width:'100%'};
+                      if (isMessageFromMe) {
+                        cardStyle['backgroundColor'] = '#fffde7';
+                        cardStyle['marginRight'] = '1em';
+                        return (
+                          <div key={message.id} className={cardClassNames}>
+                            <Card style={cardStyle}>
+                              <CardText style={{padding: '2px 16px 2px 16px'}}>
+                                  <h3> {message.userName} </h3>
+                                  <p>
+                                  {message.content}
+                                  </p>
+                             </CardText>
+                            </Card>
+                            <Avatar src={gravatarUrl} />
+                          </div>
+                        );
+                      }
+                      cardStyle['marginLeft'] = '1em';
                       return (
-                        <div key={message.id}>
-                        <ListItem
-                          disabled={true}
-                          leftAvatar={<Avatar src={gravatarUrl} />}
-                          primaryText={message.userName}
-                          secondaryText={
-                            <p>
-                            {message.content}
-                            </p>
-                          }
-                        />
-                        <ListDivider />
+                        <div key={message.id} className={cardClassNames}>
+                          <Avatar src={gravatarUrl} />
+                          <Card style={cardStyle}>
+                            <CardText style={{padding: '2px 16px 2px 16px'}}>
+                                <h3> {message.userName} </h3>
+                                <p>
+                                {message.content}
+                                </p>
+                           </CardText>
+                          </Card>
                         </div>
                       );
                     })
                   }
-                </List>
               </Paper>
             </div>
             <div className="message-composer">

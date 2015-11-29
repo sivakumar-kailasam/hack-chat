@@ -8,6 +8,7 @@
     "start": "npm run build && node app.js"
   },
   "dependencies": {
+    "classnames": "^2.2.1",
     "express": "^4.13.3",
     "gravatar": "^1.4.0",
     "history": "^1.13.1",
