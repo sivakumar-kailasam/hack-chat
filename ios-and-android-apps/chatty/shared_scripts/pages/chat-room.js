@@ -74,7 +74,7 @@ const chatRoom = React.createClass({
             const cardClassNames = classNames('conversation-card', {'message-self': isMessageFromMe}, {'message-others': !isMessageFromMe});
             return (
               <View key={message.id}>
-                <Gravatar email={message.emailAddress} />
+                <Gravatar email={message.emailAddress} size={30}/>
                 <Text> {message.userName} - {message.content} </Text>
               </View>
             );
@@ -83,6 +83,7 @@ const chatRoom = React.createClass({
         <TextInput
             style={[styles.loginInput]}
             onChangeText={(messageContent) => this.setState({ messageContent })}
+            value={this.state.messageContent}
             placeholder='Type your message here!'
           />
           <AwesomeButton

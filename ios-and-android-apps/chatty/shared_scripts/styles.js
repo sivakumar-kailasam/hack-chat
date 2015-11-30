@@ -6,8 +6,11 @@ const { StyleSheet } = React;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
     alignItems: 'stretch',
+    backgroundColor: '#bad',
+    flex: 1
   },
   formGroup: {
   },
@@ -15,6 +18,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     height: 40,
+    width: 300,
+    alignSelf: 'center'
   },
   loginButtonLabel: {
     color: 'white'
@@ -25,7 +30,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
     borderWidth: 1,
+    borderTopWidth: 0,
+    width: 300,
+    padding: 5,
     borderColor: '#f5f5f5',
+    alignSelf: 'center',
     alignItems: 'center',
   },
   loginLabel: {
@@ -35,6 +44,7 @@ const styles = StyleSheet.create({
     borderColor: 'red'
   },
   logoImage: {
+    marginTop: 100,
     width: 100,
     height: 100,
     alignSelf: 'center'

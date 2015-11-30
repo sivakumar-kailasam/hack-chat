@@ -1,7 +1,6 @@
 'use strict';
 
 const React       = require('react-native');
-const Emoji       = require('react-native-emoji');
 const validator = require('validator');
 const styles      = require('../styles');
 const AwesomeButton = require('react-native-awesome-button')
@@ -58,7 +57,6 @@ const chatty = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}> Welcome to Chatty! <Emoji name='sunglasses'/> </Text>
         <Image source={require('../chat-icon.png')} style={styles.logoImage} />
         <View style={styles.formGroup}>
           <TextInput
@@ -83,9 +81,9 @@ const chatty = React.createClass({
          transitionDuration={200}
          states={{
            idle: {
-             text: 'Login',
+             text: `LET'S CHAT!`,
              onPress: this.login,
-             backgroundColor: '#1155DD'
+             backgroundColor: '#2196f3'
            },
            busy: {
             text: 'Logging In',
