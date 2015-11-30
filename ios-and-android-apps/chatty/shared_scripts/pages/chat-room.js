@@ -67,15 +67,19 @@ const chatRoom = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-      <Text>{this.props.emailAddress}</Text>
         {
           this.state.messages.map((message, i)=> {
             const isMessageFromMe = (message.emailAddress === this.props.emailAddress);
             const cardClassNames = classNames('conversation-card', {'message-self': isMessageFromMe}, {'message-others': !isMessageFromMe});
             return (
-              <View key={message.id}>
+              <View key={message.id} style={[
+                styles.messageCard,
+                !isMessageFromMe && styles.messageOthers,
+                isMessageFromMe && styles.messageMine
+              ]}>
                 <Gravatar email={message.emailAddress} size={30}/>
-                <Text> {message.userName} - {message.content} </Text>
+                <Text style={{fontWeight: 'bold'}}> {message.userName}</Text>
+                <Text style={{fontStyle: 'italic'}}> {message.content}</Text>
               </View>
             );
           })

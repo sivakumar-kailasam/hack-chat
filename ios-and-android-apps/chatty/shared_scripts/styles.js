@@ -55,6 +55,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10
   },
+  messageCard: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    width: 250,
+    flexWrap: 'wrap',
+    margin: 10,
+    flexDirection: 'row'
+  },
+  messageMine: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#fffde7'
+  },
+  messageOthers: {
+    alignSelf: 'flex-start'
+  }
 });
 
 module.exports = styles;
