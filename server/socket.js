@@ -32,7 +32,7 @@ module.exports = function (socket) {
       emailAddress: data.emailAddress,
       content: data.message
     };
-    console.log('Received message from client');
+    console.log(`Received message from ${data.userName}(${data.emailAddress}): ${data.message}`);
     socket.broadcast.emit('serverSentMessage', { message });
     fn({message});
   });
