@@ -1,6 +1,6 @@
 'use strict';
 
-const machineIp = '192.168.0.101';
+const machineIp = '10.104.22.17';
 
 const React = require('react-native');
 const {
@@ -26,7 +26,7 @@ module.exports = function() {
           case 'chatRoom':
               return createElement(ChatRoomPage, {
                 userName: route.userName,
-                emailId: route.emailId,
+                emailAddress: route.emailAddress,
                 socket: route.socket,
                 navigator
               });

@@ -42,7 +42,7 @@ module.exports = React.createClass({
     const url = `https://secure.gravatar.com/avatar/${emailHash}?${query}`;
     return (
       <View>
-      <Image source={{uri: url}} style={{height: 100, width: 100}} />
+      <Image source={{uri: url}} style={{height: this.props.size, width: this.props.size}} />
       </View>
     );
   }

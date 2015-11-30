@@ -48,7 +48,7 @@ const chatty = React.createClass({
       this.props.navigator.push({
         name: 'chatRoom',
         userName: this.state.userName,
-        emailId: this.state.emailId,
+        emailAddress: this.state.emailId,
         socket: this.props.socket,
         users,
         secretSessionId
